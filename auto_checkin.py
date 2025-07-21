@@ -90,7 +90,29 @@ class KurobbsClient:
             "reqMonth": f"{beijing_time.month:02d}",
         }
         return self.make_request(self.SIGN_URL, data)
+        
+    def checkin_wuwa(self) -> Response:
+        """Perform the check-in operation for wuwa."""
+        mine_info = self.get_mine_info()
+        user_game_list = self.get_user_game_list(user_id=mine_info.get("mine", {}).get("userId", 0))
+        # 获取北京时间（UTC+8）
+        beijing_tz = ZoneInfo('Asia/Shanghai')
+        beijing_time = datetime.now(beijing_tz)
 
+        if len(user_game_list.get("defaultRoleList", [])) < 2:
+            logger.info("没有鸣潮游戏角色，跳过鸣潮签到")
+            return
+        role_info = user_game_list.get("defaultRoleList", [])[1]
+
+        data = {
+            "gameId": role_info.get("gameId", 3),
+            "serverId": role_info.get("serverId", None),
+            "roleId": role_info.get("roleId", 0),
+            "userId": role_info.get("userId", 0),
+            "reqMonth": f"{beijing_time.month:02d}",
+        }
+        return self.make_request(self.SIGN_URL, data)
+        
     def sign_in(self) -> Response:
         """Perform the sign-in operation."""
         return self.make_request(self.USER_SIGN_URL, {"gameId": 2})
@@ -122,8 +144,14 @@ class KurobbsClient:
         self._process_sign_action(
             action_name="checkin",
             action_method=self.checkin,
-            success_message="签到奖励签到成功",
-            failure_message="签到奖励签到失败",
+            success_message="战双签到奖励签到成功",
+            failure_message="战双签到奖励签到失败",
+        )
+        self._process_sign_action(
+            action_name="checkin",
+            action_method=self.checkin,
+            success_message="鸣潮签到奖励签到成功",
+            failure_message="鸣潮签到奖励签到失败",
         )
 
         self._process_sign_action(
