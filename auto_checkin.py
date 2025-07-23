@@ -148,8 +148,8 @@ class KurobbsClient:
             failure_message="战双签到奖励签到失败",
         )
         self._process_sign_action(
-            action_name="checkin",
-            action_method=self.checkin,
+            action_name="checkin_wuwa",
+            action_method=self.checkin_wuwa,
             success_message="鸣潮签到奖励签到成功",
             failure_message="鸣潮签到奖励签到失败",
         )
