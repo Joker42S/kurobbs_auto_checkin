@@ -31,6 +31,7 @@ class KurobbsClient:
 
     def __init__(self, token: str):
         self.token = token
+        logger.info(f'token: {token}')
         self.result: Dict[str, str] = {}
         self.exceptions: List[Exception] = []
 
